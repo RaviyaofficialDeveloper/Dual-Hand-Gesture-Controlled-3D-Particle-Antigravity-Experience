@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual-Hand Gesture Controlled 3D Particle Antigravity Experience</title>
+
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- MediaPipe Hands & Camera Utils -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <link rel="icon" href="https://lh3.googleusercontent.com/d/1p7F0YC1s756Um7lYH85n1uT3QpY9K8-O">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Hidden Video for MediaPipe Hands -->
+    <video id="input_video" style="display:none" playsinline></video>
+
+    <!-- UI Overlay Layer -->
+    <div id="ui-layer">
+        <header>
+            <div class="brand-box">
+                <h1>ANTIGRAVITY // DUAL-HAND PARTICLES</h1>
+                <div class="subtitle">High-Stability MediaPipe AI Force Manipulation</div>
+                <p id="status-text" class="status loading">
+                    <span class="status-dot"></span>
+                    <span id="status-msg">Initializing MediaPipe Dual Engine...</span>
+                </p>
+            </div>
+
+            <!-- Top-Right Futuristic Gesture HUD -->
+            <div id="hud-card">
+                <div class="hud-header">
+                    <span>SYSTEM TELEMETRY</span>
+                    <span id="hud-fps" class="hud-fps">60 FPS</span>
+                </div>
+
+                <div class="hands-grid">
+                    <!-- Left Hand Box -->
+                    <div class="hand-col">
+                        <div class="hand-label left">
+                            <span>●</span> LEFT HAND
+                        </div>
+                        <div id="hud-left-gesture" class="hand-gesture">SEARCHING...</div>
+                        <div id="hud-left-sub" class="hand-sub">Channel: Gravity</div>
+                    </div>
+
+                    <!-- Right Hand Box -->
+                    <div class="hand-col">
+                        <div class="hand-label right">
+                            <span>●</span> RIGHT HAND
+                        </div>
+                        <div id="hud-right-gesture" class="hand-gesture">SEARCHING...</div>
+                        <div id="hud-right-sub" class="hand-sub">Channel: Orbit/Rotate</div>
+                    </div>
+                </div>
+
+                <div class="mode-row">
+                    <div class="mode-title">ACTIVE FIELD</div>
+                    <div id="hud-mode-value" class="mode-value">COSMIC DRIFT</div>
+                </div>
+
+                <div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.66rem; color:rgba(255,255,255,0.5); font-weight:700;">
+                        <span>FIELD RESONANCE</span>
+                        <span id="hud-energy-text">80%</span>
+                    </div>
+                    <div class="energy-bar-wrap">
+                        <div id="hud-energy-bar" class="energy-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Instructions Side Panel -->
+        <div id="instructions-panel">
+            <div class="inst-title">
+                <span>⚡ DUAL-HAND GESTURE MAP</span>
+                <span class="inst-toggle" onclick="toggleInstructions()">HIDE</span>
+            </div>
+
+            <div class="inst-section">
+                <div class="inst-header" style="color:var(--cyan)">LEFT HAND [FORCE SCULPTOR]</div>
+                <div class="inst-row"><span class="key-action">PINCH</span><span class="key-result">GRAVITY WELL (Pulls in)</span></div>
+                <div class="inst-row"><span class="key-action">OPEN PALM</span><span class="key-result">ANTI-GRAVITY (Pushes out)</span></div>
+                <div class="inst-row"><span class="key-action">FIST</span><span class="key-result">CORE COMPRESSOR</span></div>
+                <div class="inst-row"><span class="key-action">POINTING</span><span class="key-result">FORCE BEAM VECTOR</span></div>
+                <div class="inst-row"><span class="key-action">PEACE / V</span><span class="key-result">VORTEX TORNADO</span></div>
+                <div class="inst-row"><span class="key-action">SPREAD</span><span class="key-result">RADIAL SHOCKWAVE</span></div>
+            </div>
+
+            <div class="inst-section">
+                <div class="inst-header" style="color:var(--pink)">RIGHT HAND [UNIVERSE DIRECTOR]</div>
+                <div class="inst-row"><span class="key-action">OPEN / MOVE</span><span class="key-result">ROTATE 3D UNIVERSE</span></div>
+                <div class="inst-row"><span class="key-action">PINCH</span><span class="key-result">PRECISION / TIME-SLOW</span></div>
+                <div class="inst-row"><span class="key-action">FIST</span><span class="key-result">CHAOTIC TURBULENCE</span></div>
+                <div class="inst-row"><span class="key-action">PEACE / V</span><span class="key-result">ANGULAR ORBIT MODE</span></div>
+                <div class="inst-row"><span class="key-action">SPREAD</span><span class="key-result">ENERGY EXPANSION</span></div>
+            </div>
+
+            <div class="inst-section">
+                <div class="inst-header tag-dual">TWO-HAND SYNERGY COMBOS</div>
+                <div class="inst-row"><span class="key-action">BOTH PINCH</span><span class="key-result">SINGULARITY COLLAPSE</span></div>
+                <div class="inst-row"><span class="key-action">BOTH OPEN</span><span class="key-result">ANTIGRAVITY BLAST</span></div>
+                <div class="inst-row"><span class="key-action">L-PINCH + R-OPEN</span><span class="key-result">GRAVITY vs ANTIGRAVITY</span></div>
+                <div class="inst-row"><span class="key-action">HAND DISTANCE</span><span class="key-result">DYNAMIC UNIVERSE SCALE</span></div>
+                <div class="inst-row"><span class="key-action">OPPOSITE MOVE</span><span class="key-result">TORQUE TWIST FIELD</span></div>
+            </div>
+
+            <div style="margin-top:6px; font-size:0.68rem; color:rgba(255,255,255,0.4); text-align:center;">
+                Shortcuts: [1-0] Shapes · [Space] Auto · [D] Debug · [R] Instant Reset
+            </div>
+        </div>
+
+        <!-- Bottom Controls Bar (13 Shapes + Sensitivity + Utilities) -->
+        <div id="controls-wrapper">
+            <div id="controls">
+                <button onclick="setShape('sphere')" class="shape-btn active" id="btn-sphere">Sphere</button>
+                <button onclick="setShape('heart')" class="shape-btn" id="btn-heart">Heart</button>
+                <button onclick="setShape('saturn')" class="shape-btn" id="btn-saturn">Saturn</button>
+                <button onclick="setShape('flower')" class="shape-btn" id="btn-flower">Flower</button>
+                <button onclick="setShape('helix')" class="shape-btn" id="btn-helix">Helix</button>
+                <button onclick="setShape('grid')" class="shape-btn" id="btn-grid">Grid</button>
+                <button onclick="setShape('torus')" class="shape-btn" id="btn-torus">Torus</button>
+                <button onclick="setShape('dna')" class="shape-btn" id="btn-dna">DNA</button>
+                <button onclick="setShape('galaxy')" class="shape-btn" id="btn-galaxy">Galaxy</button>
+                <button onclick="setShape('cube')" class="shape-btn" id="btn-cube">Cube</button>
+                <button onclick="setShape('star')" class="shape-btn" id="btn-star">Star</button>
+                <button onclick="setShape('wave')" class="shape-btn" id="btn-wave">Wave</button>
+                <button onclick="setShape('double_helix')" class="shape-btn" id="btn-double_helix">Double Helix</button>
+            </div>
+
+            <div class="util-btn-group">
+                <!-- Sensitivity Selector -->
+                <div class="sens-switch-group">
+                    <span class="sens-label">SENSITIVITY</span>
+                    <button onclick="setSensitivity('LOW')" class="sens-btn" id="sens-low">LOW</button>
+                    <button onclick="setSensitivity('NORMAL')" class="sens-btn active" id="sens-normal">NORMAL</button>
+                    <button onclick="setSensitivity('HIGH')" class="sens-btn" id="sens-high">HIGH</button>
+                </div>
+
+                <!-- Stability Mode Toggle -->
+                <button onclick="toggleStabilityMode()" class="util-btn stability-active" id="btn-stability">Stability: ON</button>
+                <button onclick="toggleAutoRotate()" class="util-btn" id="btn-autorotate">Auto-Rotate: ON</button>
+                <button onclick="toggleDebug()" class="util-btn" id="btn-debug">Debug [D]</button>
+                <button onclick="resetParticles()" class="util-btn" id="btn-reset" style="border-color:var(--cyan); color:var(--cyan);">Fast Reset [R]</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mirrored Webcam Skeleton Canvas -->
+    <div id="webcam-container">
+        <canvas id="webcam-preview"></canvas>
+        <div class="webcam-legend">
+            <div class="legend-item"><span class="legend-dot left"></span> Left Hand</div>
+            <div class="legend-item"><span class="legend-dot right"></span> Right Hand</div>
+        </div>
+    </div>
+
+    <!-- Real-time Diagnostic Debug HUD -->
+    <div id="debug-panel">
+        <div class="debug-title">
+            <span>DIAGNOSTIC TELEMETRY</span>
+            <span id="dbg-fps">60 FPS</span>
+        </div>
+        <div>Hands Tracked: <span id="dbg-hands-count" style="color:#fff;">0/2</span></div>
+        <div>Left Raw: <span id="dbg-left-raw">N/A</span></div>
+        <div>Left Smooth: <span id="dbg-left-smooth">N/A</span></div>
+        <div>Left Spd / Gest: <span id="dbg-left-gest">N/A</span></div>
+        <div>Right Raw: <span id="dbg-right-raw">N/A</span></div>
+        <div>Right Smooth: <span id="dbg-right-smooth">N/A</span></div>
+        <div>Right Spd / Gest: <span id="dbg-right-gest">N/A</span></div>
+        <div>Hand Span: <span id="dbg-hand-span">N/A</span></div>
+        <div>Physics Limits: <span id="dbg-limits">N/A</span></div>
+        <div>Reset Status: <span id="dbg-reset-status" style="color:var(--green);">IDLE</span></div>
+    </div>
+
+    <!-- Main WebGL 3D Container -->
+    <div id="canvas-container"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
